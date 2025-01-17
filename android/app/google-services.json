@@ -1,0 +1,91 @@
+{
+  "project_info": {
+    "project_number": "163071776412",
+    "firebase_url": "https://newton-design-default-rtdb.firebaseio.com",
+    "project_id": "newton-design",
+    "storage_bucket": "newton-design.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163071776412:android:2857d935ccabf5bfc0bf59",
+        "android_client_info": {
+          "package_name": "com.example.newton_design"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "163071776412-87bkku7ukkts0lqdpe5903fhkl1emp0s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.newton_design",
+            "certificate_hash": "12326bef12e3a086267e47e4648da6f4fb545103"
+          }
+        },
+        {
+          "client_id": "163071776412-j6ak6gh9atmkmhj4erdqbkil0bd4vnc8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4x6o7FDQPlxYh-E0txG-Yvi1B3piNL7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "163071776412-j6ak6gh9atmkmhj4erdqbkil0bd4vnc8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "163071776412-7j8jq0lu9qjt0ns35sukhtp5vru6vl9d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.newtonDesign"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163071776412:android:b84c6a3974d42f5cc0bf59",
+        "android_client_info": {
+          "package_name": "com.newton_design"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "163071776412-j6ak6gh9atmkmhj4erdqbkil0bd4vnc8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4x6o7FDQPlxYh-E0txG-Yvi1B3piNL7M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "163071776412-j6ak6gh9atmkmhj4erdqbkil0bd4vnc8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "163071776412-7j8jq0lu9qjt0ns35sukhtp5vru6vl9d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.newtonDesign"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
