@@ -243,25 +243,34 @@ class _LoginState extends State<Login> {
   }
 
   Future<UserCredential?> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication gAuth = await gUser!.authentication;
-      final credential = GoogleAuthProvider.credential(
-          accessToken: gAuth.accessToken, idToken: gAuth.idToken);
+  try {
+    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+    if (gUser == null) return null; // User canceled the sign-in
 
+    final GoogleSignInAuthentication gAuth = await gUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: gAuth.accessToken,
+      idToken: gAuth.idToken,
+    );
+
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+    if (userCredential.user != null) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                HomeScreen(isDarkMode: _isDarkMode, toggleTheme: toggleTheme)),
+          builder: (context) => HomeScreen(isDarkMode: _isDarkMode, toggleTheme: toggleTheme),
+        ),
       );
-
-      return await FirebaseAuth.instance.signInWithCredential(credential);
-    } catch (e) {
-      debugPrint("Google Sign-In error: $e");
-      return null;
     }
+    
+    return userCredential;
+  } catch (e) {
+    debugPrint("Google Sign-In error: $e");
+    return null;
   }
+}
+
 
   void remoteLogin() async {
     try {

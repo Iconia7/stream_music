@@ -25,6 +25,11 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
   bool isLoading = false;
   bool _isDarkMode = false;
+   bool hasUppercase = false;
+  bool hasLowercase = false;
+  bool hasNumber = false;
+  bool hasSpecialChar = false;
+  bool isPasswordLengthValid = false;
 
   void toggleTheme(bool isDark) {
     setState(() {
@@ -32,8 +37,51 @@ class _SignupState extends State<Signup> {
     });
   }
 
+  void validatePassword(String value) {
+    setState(() {
+      hasUppercase = value.contains(RegExp(r'[A-Z]'));
+      hasLowercase = value.contains(RegExp(r'[a-z]'));
+      hasNumber = value.contains(RegExp(r'\d'));
+      hasSpecialChar = value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+      isPasswordLengthValid = value.length >= 8 && value.length <= 20;
+    });
+  }
+
+   Future<void> showSuccessDialog() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Signup Success', style: GoogleFonts.notoSerif()),
+          content: Text('Your account has been created successfully!',
+              style: GoogleFonts.notoSerif()),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Login()),
+                );
+              },
+              child: Text('OK', style: GoogleFonts.notoSerif()),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    const int minPasswordLength = 8;
+    const int maxPasswordLength = 20;
+
+    bool hasUppercase = pass.text.contains(RegExp(r'[A-Z]'));
+    bool hasLowercase = pass.text.contains(RegExp(r'[a-z]'));
+    bool hasNumber = pass.text.contains(RegExp(r'\d'));
+    bool hasSpecialChar = pass.text.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+
     return Scaffold(
       body: Stack(
         children: [
@@ -70,6 +118,105 @@ class _SignupState extends State<Signup> {
                       hint: "Password",
                       icon: Icons.lock,
                       isPassword: true,
+                      onChanged: validatePassword,
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 35,right: 35),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10),
+                          Text(
+                            "Password must:",
+                            style: GoogleFonts.notoSerif(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Icon(
+                                hasUppercase ? Icons.check_circle : Icons.cancel,
+                                color: hasUppercase ? Colors.green : Colors.red,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "- Contain at least one uppercase letter.",
+                                style: GoogleFonts.notoSerif(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Icon(
+                                hasLowercase ? Icons.check_circle : Icons.cancel,
+                                color: hasLowercase ? Colors.green : Colors.red,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "- Contain at least one lowercase letter.",
+                                style: GoogleFonts.notoSerif(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Icon(
+                                hasNumber ? Icons.check_circle : Icons.cancel,
+                                color: hasNumber ? Colors.green : Colors.red,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "- Include at least one number.",
+                                style: GoogleFonts.notoSerif(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Icon(
+                                hasSpecialChar ? Icons.check_circle : Icons.cancel,
+                                color: hasSpecialChar ? Colors.green : Colors.red,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "- Include at least one special character (e.g., @, #, \$).",
+                                style: GoogleFonts.notoSerif(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Icon(
+                                pass.text.length >= minPasswordLength &&
+                                        pass.text.length <= maxPasswordLength
+                                    ? Icons.check_circle
+                                    : Icons.cancel,
+                                color: pass.text.length >= minPasswordLength &&
+                                        pass.text.length <= maxPasswordLength
+                                    ? Colors.green
+                                    : Colors.red,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "- Be between $minPasswordLength-$maxPasswordLength characters.",
+                                style: GoogleFonts.notoSerif(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 30),
                     MyTextField(
@@ -187,25 +334,34 @@ class _SignupState extends State<Signup> {
   }
 
   Future<UserCredential?> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication gAuth = await gUser!.authentication;
-      final credential = GoogleAuthProvider.credential(
-          accessToken: gAuth.accessToken, idToken: gAuth.idToken);
+  try {
+    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+    if (gUser == null) return null; // User canceled the sign-in
 
+    final GoogleSignInAuthentication gAuth = await gUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: gAuth.accessToken,
+      idToken: gAuth.idToken,
+    );
+
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+    if (userCredential.user != null) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                HomeScreen(isDarkMode: _isDarkMode, toggleTheme: toggleTheme)),
+          builder: (context) => HomeScreen(isDarkMode: _isDarkMode, toggleTheme: toggleTheme),
+        ),
       );
-
-      return await FirebaseAuth.instance.signInWithCredential(credential);
-    } catch (e) {
-      debugPrint("Google Sign-In error: $e");
-      return null;
     }
+    
+    return userCredential;
+  } catch (e) {
+    debugPrint("Google Sign-In error: $e");
+    return null;
   }
+}
+
 
   Future<void> serverSignup() async {
     try {
@@ -216,20 +372,56 @@ class _SignupState extends State<Signup> {
               child: CircularProgressIndicator(),
             );
           });
-      if (pass.text == cpass.text) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email.text,
-          password: pass.text,
-        );
-      } else {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return const Center(child: Text("Passwords do not match"),);
-            });
+      const int minPasswordLength = 8;
+      const int maxPasswordLength = 20;
+
+      bool hasUppercase = pass.text.contains(RegExp(r'[A-Z]'));
+      bool hasLowercase = pass.text.contains(RegExp(r'[a-z]'));
+      bool hasNumber = pass.text.contains(RegExp(r'\d'));
+      bool hasSpecialChar = pass.text.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+
+      if (pass.text.isEmpty || cpass.text.isEmpty || email.text.isEmpty) {
+        Navigator.pop(context);
+        Get.snackbar(
+            "Error", "All fields are required.",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.redAccent,
+            colorText: Colors.white);
+        return;
       }
+
+      if (pass.text != cpass.text) {
+        Navigator.pop(context);
+        Get.snackbar(
+            "Error", "Passwords do not match.",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.redAccent,
+            colorText: Colors.white);
+        return;
+      }
+
+      if (pass.text.length < minPasswordLength ||
+          pass.text.length > maxPasswordLength ||
+          !hasUppercase ||
+          !hasLowercase ||
+          !hasNumber ||
+          !hasSpecialChar) {
+        Navigator.pop(context);
+        Get.snackbar(
+            "Error", "Password does not meet the requirements.",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.redAccent,
+            colorText: Colors.white);
+        return;
+      }
+
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email.text,
+        password: pass.text,
+      );
+
       Navigator.pop(context);
-      // Navigate to HomeScreen if login is successful
+      await showSuccessDialog();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Login()),

@@ -6,6 +6,7 @@ class MyTextField extends StatefulWidget {
   final IconData icon;
   final Color colour;
   final bool isPassword;
+  final ValueChanged<String>? onChanged; // Add onChanged callback
 
   const MyTextField({
     super.key,
@@ -14,6 +15,7 @@ class MyTextField extends StatefulWidget {
     this.icon = Icons.abc,
     this.colour = const Color.fromARGB(255, 223, 222, 222),
     this.isPassword = false,
+    this.onChanged, // Initialize onChanged
   });
 
   @override
@@ -22,7 +24,7 @@ class MyTextField extends StatefulWidget {
 }
 
 class _MyTextFieldState extends State<MyTextField> {
-  bool _isObscured = true; 
+  bool _isObscured = true;
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +32,8 @@ class _MyTextFieldState extends State<MyTextField> {
       padding: const EdgeInsets.only(left: 20, right: 20),
       child: TextField(
         controller: widget.controller,
-        obscureText:
-            widget.isPassword && _isObscured, 
+        obscureText: widget.isPassword && _isObscured,
+        onChanged: widget.onChanged, // Pass onChanged to TextField
         decoration: InputDecoration(
           fillColor: widget.colour,
           filled: true,
