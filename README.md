@@ -63,7 +63,7 @@ Follow these steps to set up the app locally:
 
 You can download the APK file for the Stream Music App from the link below:
 
-- [Download APK](https://github.com/Iconia7/stream_music/raw/refs/heads/master/apk/Stream%20Music.apk?download=)
+- [Download APK](https://github.com/Iconia7/stream_music/raw/refs/heads/master/apk/Stream%20Music%20v2.0.apk?download=)
 
 ---
 
